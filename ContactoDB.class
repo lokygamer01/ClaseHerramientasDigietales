@@ -51,6 +51,7 @@ public class ContactoDB {
         String sql = "SELECT * FROM contacto";
         Cursor contacto = dbt.rawQuery(sql, null);
         List<ContactoModelo> contactolist = new ArrayList<>();
+        //Quiero convertir un List a una Matriz, llevo dia y medio pero no soy capaz, tal vez ni se pueda :(
         while (contacto.moveToNext()) {
             ContactoModelo contacto2 = new ContactoModelo();
             contacto2.setId(contacto.getInt(0));
