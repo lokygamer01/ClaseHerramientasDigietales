@@ -1,0 +1,67 @@
+package com.camilo.contactosmoviles.controlador;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
+
+import com.camilo.contactosmoviles.modelos.ContactoModelo;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class ContactoDB {
+
+    private SQLiteDatabase db;
+    private String nombre_bd = "Contactos";
+    private Context context;
+
+    public ContactoDB(Context context) {
+        this.context = context;
+    }
+
+    private SQLiteDatabase getDb() {
+        if (db == null) {
+            File dbFile = context.getDatabasePath(nombre_bd);
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null);
+        }
+        return db;
+    }
+
+    public void crearTablas() {
+        SQLiteDatabase dbt = getDb();
+        dbt.execSQL("CREATE TABLE IF NOT EXISTS contacto (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, apellido TEXT, empresa TEXT, telefono TEXT, nota TEXT)");
+    }
+
+    public void crearContactos(ContactoModelo contacto) {
+        SQLiteDatabase dbt = getDb();
+        String nombre = contacto.getNombre();
+        String apellido = contacto.getApellido();
+        String empresa = contacto.getEmpresa();
+        String telefono = contacto.getTelefono();
+        String nota = contacto.getNota();
+        dbt.execSQL("INSERT INTO  contacto (nombre,apellido,empresa,telefono,nota) values(" + nombre + "," + apellido + "," + empresa + "," + telefono + "," + nota + ")");
+    }
+
+    public List<ContactoModelo> MostrarContacto() {
+        SQLiteDatabase dbt = getDb();
+        String sql = "SELECT * FROM contacto";
+        Cursor contacto = dbt.rawQuery(sql, null);
+        List<ContactoModelo> contactolist = new ArrayList<>();
+        while (contacto.moveToNext()) {
+            ContactoModelo contacto2 = new ContactoModelo();
+            contacto2.setId(contacto.getInt(0));
+            contacto2.setNombre(contacto.getString(1));
+            contacto2.setApellido(contacto.getString(2));
+            contacto2.setEmpresa(contacto.getString(3));
+            contacto2.setTelefono(contacto.getString(4));
+            contacto2.setNota(contacto.getString(5));
+            contactolist.add(contacto2);
+        }
+            return contactolist;
+    }
+
+}
